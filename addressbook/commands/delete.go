@@ -2,7 +2,7 @@ package commands
 
 import (
 	"bufio"
-	"errors"
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -11,29 +11,23 @@ import (
 )
 
 // Delete a person from address book
-func Delete(book *pb.AddressBook, reader *bufio.Reader) error {
+func Delete(c pb.AddressBookServiceClient, reader *bufio.Reader) {
 	fmt.Print("ID: ")
 	IDStr, _ := reader.ReadString('\n')
 
 	ID, err := strconv.Atoi(strings.TrimSpace(IDStr))
 	if err != nil {
-		return err
+		fmt.Printf("Could not convert id: %v\n", err)
+		return
 	}
 
-	found := -1
-	for i, person := range book.People {
-		if person.Id == int32(ID) {
-			found = i
-			break
-		}
+	r, err := c.Delete(context.Background(), &pb.DeleteRequest{Id: int32(ID)})
+	if err != nil {
+		fmt.Printf("Could not delete: %v\n", err)
+		return
 	}
 
-	if found == -1 {
-		return errors.New("Not found")
+	if !r.Success {
+		fmt.Println("Failed to delete")
 	}
-
-	copy(book.People[found:], book.People[found+1:])
-	book.People = book.People[:len(book.People)-1]
-
-	return nil
 }

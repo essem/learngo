@@ -1,3 +1,4 @@
 debug
-addressbook
-addressbook.db
+server/server
+server/addressbook.db
+client/client

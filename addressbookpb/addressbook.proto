@@ -1,7 +1,7 @@
 syntax = "proto3";
 package addressbookpb;
 
-// protoc --go_out=. addressbook.proto
+// protoc --go_out=plugins=grpc:. addressbook.proto
 
 message Person {
   string name = 1;
@@ -25,4 +25,51 @@ message Person {
 // Our address book file is just one of these.
 message AddressBook {
   repeated Person people = 1;
+}
+
+service AddressBookService {
+  rpc List (Empty) returns (ListReply) {}
+  rpc Create (CreateRequest) returns (CreateReply) {}
+  rpc Read (ReadRequest) returns (ReadReply) {}
+  rpc Update (UpdateRequest) returns (UpdateReply) {}
+  rpc Delete (DeleteRequest) returns (DeleteReply) {}
+}
+
+message Empty {
+}
+
+message ListReply {
+  repeated Person people = 1;
+}
+
+message CreateRequest {
+  Person person = 1;
+}
+
+message CreateReply {
+  int32 id = 1;
+}
+
+message ReadRequest {
+  int32 id = 1;
+}
+
+message ReadReply {
+  Person person = 1;
+}
+
+message UpdateRequest {
+  Person person = 1;
+}
+
+message UpdateReply {
+  bool success = 1;
+}
+
+message DeleteRequest {
+  int32 id = 1;
+}
+
+message DeleteReply {
+  bool success = 1;
 }

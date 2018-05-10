@@ -2,6 +2,7 @@ package commands
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"strings"
 
@@ -9,7 +10,7 @@ import (
 )
 
 // Create new person and add to address book
-func Create(book *pb.AddressBook, nextID int32, reader *bufio.Reader) error {
+func Create(c pb.AddressBookServiceClient, reader *bufio.Reader) {
 	fmt.Print("Name: ")
 	Name, _ := reader.ReadString('\n')
 
@@ -17,11 +18,16 @@ func Create(book *pb.AddressBook, nextID int32, reader *bufio.Reader) error {
 	Email, _ := reader.ReadString('\n')
 
 	person := &pb.Person{
-		Id:    nextID,
+		Id:    0,
 		Name:  strings.TrimSpace(Name),
 		Email: strings.TrimSpace(Email),
 	}
-	book.People = append(book.People, person)
 
-	return nil
+	r, err := c.Create(context.Background(), &pb.CreateRequest{Person: person})
+	if err != nil {
+		fmt.Printf("Could not create: %v\n", err)
+		return
+	}
+
+	fmt.Printf("New ID: %d\n", r.Id)
 }

@@ -2,7 +2,7 @@ package commands
 
 import (
 	"bufio"
-	"errors"
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
@@ -11,31 +11,28 @@ import (
 )
 
 // Read a person information in address book
-func Read(book *pb.AddressBook, reader *bufio.Reader) error {
+func Read(c pb.AddressBookServiceClient, reader *bufio.Reader) {
 	fmt.Print("ID: ")
 	IDStr, _ := reader.ReadString('\n')
 
 	ID, err := strconv.Atoi(strings.TrimSpace(IDStr))
 	if err != nil {
-		return err
+		fmt.Printf("Could not convert id: %v\n", err)
+		return
 	}
 
-	found := -1
-	for i, person := range book.People {
-		if person.Id == int32(ID) {
-			found = i
-			break
-		}
+	r, err := c.Read(context.Background(), &pb.ReadRequest{Id: int32(ID)})
+	if err != nil {
+		fmt.Printf("Could not read: %v\n", err)
+		return
 	}
 
-	if found == -1 {
-		return errors.New("Not found")
+	if r.Person == nil {
+		fmt.Println("Not found")
+		return
 	}
 
-	person := book.People[found]
-	fmt.Printf("ID: %d\n", person.Id)
-	fmt.Printf("Name: %s\n", person.Name)
-	fmt.Printf("E-mail: %s\n", person.Email)
-
-	return nil
+	fmt.Printf("ID: %d\n", r.Person.Id)
+	fmt.Printf("Name: %s\n", r.Person.Name)
+	fmt.Printf("E-mail: %s\n", r.Person.Email)
 }
