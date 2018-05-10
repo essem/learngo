@@ -5,7 +5,9 @@ import (
 	"log"
 	"net"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	"github.com/essem/learngo/addressbook/pb"
 	"github.com/golang/protobuf/proto"
@@ -150,10 +152,21 @@ func main() {
 	pb.RegisterAddressBookServiceServer(s, svr)
 	reflection.Register(s)
 
+	var gracefulStop = make(chan os.Signal)
+	signal.Notify(gracefulStop, syscall.SIGTERM)
+	signal.Notify(gracefulStop, syscall.SIGINT)
+	go func() {
+		sig := <-gracefulStop
+		log.Printf("Caught signal: %+v", sig)
+		log.Println("Try to stop gracefully...")
+		s.GracefulStop()
+	}()
+
 	log.Printf("Start service on %s", port)
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 
+	log.Println("Write changed to file")
 	svr.write(dbFileName)
 }
