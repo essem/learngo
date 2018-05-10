@@ -1,147 +1,147 @@
 package main
 
 import (
-	"io/ioutil"
+	"database/sql"
 	"log"
 	"net"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 
+	_ "github.com/go-sql-driver/mysql"
+
 	"github.com/essem/learngo/addressbook/pb"
-	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
 )
 
 const (
-	dbFileName = "addressbook.db"
-	port       = ":50051"
+	dbConnStr = "dev:password@tcp(127.0.0.1:3306)/addressbook"
+	port      = ":50051"
 )
 
 type server struct {
-	nextID int32
-	book   pb.AddressBook
+	db *sql.DB
 }
 
 func (s *server) List(ctx context.Context, in *pb.Empty) (*pb.ListReply, error) {
 	log.Println("ListRequest", in)
 
-	return &pb.ListReply{People: s.book.People}, nil
+	rows, err := s.db.Query("SELECT id, name, email FROM people")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	people := make([]*pb.Person, 0)
+	for rows.Next() {
+		var id int32
+		var name, email string
+		if err := rows.Scan(&id, &name, &email); err != nil {
+			log.Fatal(err)
+		}
+		people = append(people, &pb.Person{Id: id, Name: name, Email: email})
+	}
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	return &pb.ListReply{People: people}, nil
 }
 
 func (s *server) Create(ctx context.Context, in *pb.CreateRequest) (*pb.CreateReply, error) {
 	log.Println("CreateRequest", in)
 
-	person := &pb.Person{
-		Id:    s.nextID,
-		Name:  strings.TrimSpace(in.Person.Name),
-		Email: strings.TrimSpace(in.Person.Email),
+	r, err := s.db.Exec("INSERT INTO people (name, email) VALUES (?, ?)", in.Person.Name, in.Person.Email)
+	if err != nil {
+		log.Fatal(err)
 	}
-	s.book.People = append(s.book.People, person)
 
-	s.nextID++
+	id, err := r.LastInsertId()
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	return &pb.CreateReply{Id: person.Id}, nil
+	return &pb.CreateReply{Id: int32(id)}, nil
 }
 
 func (s *server) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadReply, error) {
 	log.Println("ReadRequest", in)
 
-	for _, person := range s.book.People {
-		if person.Id == in.Id {
-			return &pb.ReadReply{Person: person}, nil
-		}
+	rows := s.db.QueryRow("SELECT id, name, email FROM people WHERE id = ?", in.Id)
+	var id int32
+	var name, email string
+	if err := rows.Scan(&id, &name, &email); err != nil {
+		log.Printf("Query failed: %v", err)
+		return &pb.ReadReply{Person: nil}, nil
 	}
 
-	log.Printf("Not found ID: %d", in.Id)
-
-	return &pb.ReadReply{Person: nil}, nil
+	person := &pb.Person{Id: id, Name: name, Email: email}
+	return &pb.ReadReply{Person: person}, nil
 }
 
 func (s *server) Update(ctx context.Context, in *pb.UpdateRequest) (*pb.UpdateReply, error) {
 	log.Println("UpdateRequest", in)
 
-	for _, person := range s.book.People {
-		if person.Id == in.Person.Id {
-			person.Name = strings.TrimSpace(in.Person.Name)
-			person.Email = strings.TrimSpace(in.Person.Email)
-			return &pb.UpdateReply{Success: true}, nil
-		}
+	r, err := s.db.Exec("UPDATE people SET name = ?, email = ? WHERE id = ?",
+		in.Person.Name, in.Person.Email, in.Person.Id)
+	if err != nil {
+		log.Printf("Query failed: %v", err)
+		return &pb.UpdateReply{Success: false}, nil
 	}
 
-	return &pb.UpdateReply{Success: false}, nil
+	numAffected, err := r.RowsAffected()
+	if err != nil || numAffected != 1 {
+		return &pb.UpdateReply{Success: false}, nil
+	}
+
+	return &pb.UpdateReply{Success: true}, nil
 }
 
 func (s *server) Delete(ctx context.Context, in *pb.DeleteRequest) (*pb.DeleteReply, error) {
 	log.Println("DeleteRequest", in)
 
-	found := -1
-	for i, person := range s.book.People {
-		if person.Id == in.Id {
-			found = i
-			break
-		}
-	}
-
-	if found == -1 {
+	r, err := s.db.Exec("DELETE FROM people WHERE id = ?", in.Id)
+	if err != nil {
+		log.Printf("Query failed: %v", err)
 		return &pb.DeleteReply{Success: false}, nil
 	}
 
-	copy(s.book.People[found:], s.book.People[found+1:])
-	s.book.People = s.book.People[:len(s.book.People)-1]
+	numAffected, err := r.RowsAffected()
+	if err != nil || numAffected != 1 {
+		return &pb.DeleteReply{Success: false}, nil
+	}
+
 	return &pb.DeleteReply{Success: true}, nil
 }
 
-func (s *server) load(dbFileName string) error {
-	s.book = pb.AddressBook{}
-	s.nextID = 1
+func (s *server) init() {
+	log.Println("Init server")
 
-	if _, err := os.Stat(dbFileName); err != nil {
-		log.Fatalln("No database file exists.")
-		return err
-	}
-
-	in, err := ioutil.ReadFile(dbFileName)
+	db, err := sql.Open("mysql", dbConnStr)
 	if err != nil {
-		log.Fatalln("Failed to read:", err)
-		return err
+		log.Fatalf("Failed to open database: %v", err)
+	}
+	s.db = db
+
+	var numPeople int
+	err = db.QueryRow("SELECT COUNT(id) FROM people").Scan(&numPeople)
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	if err := proto.Unmarshal(in, &s.book); err != nil {
-		log.Fatalln("Failed to unmarshal:", err)
-		return err
-	}
-
-	for i := 1; i < len(s.book.People); i++ {
-		id := s.book.People[i].Id
-		if id >= s.nextID {
-			s.nextID = id + 1
-		}
-	}
-	log.Printf("%d people loaded\n", len(s.book.People))
-
-	return nil
+	log.Printf("There are %d people in database", numPeople)
 }
 
-func (s *server) write(dbFileName string) error {
-	out, err := proto.Marshal(&s.book)
-	if err != nil {
-		return err
-	}
+func (s *server) cleanup() {
+	log.Println("Cleanup server")
 
-	if err := ioutil.WriteFile(dbFileName, out, 0644); err != nil {
-		return err
-	}
-
-	return nil
+	s.db.Close()
 }
 
 func main() {
 	svr := &server{}
-	svr.load(dbFileName)
+	svr.init()
 
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
@@ -167,6 +167,5 @@ func main() {
 		log.Fatalf("Failed to serve: %v", err)
 	}
 
-	log.Println("Write changed to file")
-	svr.write(dbFileName)
+	svr.cleanup()
 }
