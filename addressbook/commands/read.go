@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	pb "github.com/essem/learngo/addressbookpb"
+	"github.com/essem/learngo/addressbook/pb"
 )
 
 // Read a person information in address book

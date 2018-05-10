@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	pb "github.com/essem/learngo/addressbookpb"
+	"github.com/essem/learngo/addressbook/pb"
 )
 
 // List every people in address book

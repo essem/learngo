@@ -7,7 +7,7 @@ import (
 	"os"
 	"strings"
 
-	pb "github.com/essem/learngo/addressbookpb"
+	"github.com/essem/learngo/addressbook/pb"
 	"github.com/golang/protobuf/proto"
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"

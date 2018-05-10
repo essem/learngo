@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/essem/learngo/addressbook/commands"
-	pb "github.com/essem/learngo/addressbookpb"
+	"github.com/essem/learngo/addressbook/pb"
 	"google.golang.org/grpc"
 )
 

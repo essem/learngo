@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	pb "github.com/essem/learngo/addressbookpb"
+	"github.com/essem/learngo/addressbook/pb"
 )
 
 // Create new person and add to address book

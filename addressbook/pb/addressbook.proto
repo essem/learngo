@@ -1,5 +1,5 @@
 syntax = "proto3";
-package addressbookpb;
+package pb;
 
 // protoc --go_out=plugins=grpc:. addressbook.proto
 
