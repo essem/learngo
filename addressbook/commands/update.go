@@ -13,9 +13,9 @@ import (
 // Update a people information
 func Update(c pb.AddressBookServiceClient, reader *bufio.Reader) {
 	fmt.Print("ID: ")
-	IDStr, _ := reader.ReadString('\n')
+	idStr, _ := reader.ReadString('\n')
 
-	ID, err := strconv.Atoi(strings.TrimSpace(IDStr))
+	id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64)
 	if err != nil {
 		fmt.Printf("Could not convert id: %v\n", err)
 		return
@@ -28,7 +28,7 @@ func Update(c pb.AddressBookServiceClient, reader *bufio.Reader) {
 	Email, _ := reader.ReadString('\n')
 
 	person := pb.Person{}
-	person.Id = int32(ID)
+	person.Id = id
 	person.Name = strings.TrimSpace(Name)
 	person.Email = strings.TrimSpace(Email)
 

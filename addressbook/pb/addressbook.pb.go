@@ -46,12 +46,12 @@ func (x Person_PhoneType) String() string {
 	return proto.EnumName(Person_PhoneType_name, int32(x))
 }
 func (Person_PhoneType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{0, 0}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{0, 0}
 }
 
 type Person struct {
 	Name                 string                `protobuf:"bytes,1,opt,name=name" json:"name,omitempty"`
-	Id                   int32                 `protobuf:"varint,2,opt,name=id" json:"id,omitempty"`
+	Id                   int64                 `protobuf:"varint,2,opt,name=id" json:"id,omitempty"`
 	Email                string                `protobuf:"bytes,3,opt,name=email" json:"email,omitempty"`
 	Phones               []*Person_PhoneNumber `protobuf:"bytes,4,rep,name=phones" json:"phones,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
@@ -63,7 +63,7 @@ func (m *Person) Reset()         { *m = Person{} }
 func (m *Person) String() string { return proto.CompactTextString(m) }
 func (*Person) ProtoMessage()    {}
 func (*Person) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{0}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{0}
 }
 func (m *Person) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Person.Unmarshal(m, b)
@@ -90,7 +90,7 @@ func (m *Person) GetName() string {
 	return ""
 }
 
-func (m *Person) GetId() int32 {
+func (m *Person) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
@@ -123,7 +123,7 @@ func (m *Person_PhoneNumber) Reset()         { *m = Person_PhoneNumber{} }
 func (m *Person_PhoneNumber) String() string { return proto.CompactTextString(m) }
 func (*Person_PhoneNumber) ProtoMessage()    {}
 func (*Person_PhoneNumber) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{0, 0}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{0, 0}
 }
 func (m *Person_PhoneNumber) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Person_PhoneNumber.Unmarshal(m, b)
@@ -169,7 +169,7 @@ func (m *AddressBook) Reset()         { *m = AddressBook{} }
 func (m *AddressBook) String() string { return proto.CompactTextString(m) }
 func (*AddressBook) ProtoMessage()    {}
 func (*AddressBook) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{1}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{1}
 }
 func (m *AddressBook) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_AddressBook.Unmarshal(m, b)
@@ -206,7 +206,7 @@ func (m *Empty) Reset()         { *m = Empty{} }
 func (m *Empty) String() string { return proto.CompactTextString(m) }
 func (*Empty) ProtoMessage()    {}
 func (*Empty) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{2}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{2}
 }
 func (m *Empty) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Empty.Unmarshal(m, b)
@@ -237,7 +237,7 @@ func (m *ListReply) Reset()         { *m = ListReply{} }
 func (m *ListReply) String() string { return proto.CompactTextString(m) }
 func (*ListReply) ProtoMessage()    {}
 func (*ListReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{3}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{3}
 }
 func (m *ListReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ListReply.Unmarshal(m, b)
@@ -275,7 +275,7 @@ func (m *CreateRequest) Reset()         { *m = CreateRequest{} }
 func (m *CreateRequest) String() string { return proto.CompactTextString(m) }
 func (*CreateRequest) ProtoMessage()    {}
 func (*CreateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{4}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{4}
 }
 func (m *CreateRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateRequest.Unmarshal(m, b)
@@ -303,7 +303,7 @@ func (m *CreateRequest) GetPerson() *Person {
 }
 
 type CreateReply struct {
-	Id                   int32    `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -313,7 +313,7 @@ func (m *CreateReply) Reset()         { *m = CreateReply{} }
 func (m *CreateReply) String() string { return proto.CompactTextString(m) }
 func (*CreateReply) ProtoMessage()    {}
 func (*CreateReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{5}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{5}
 }
 func (m *CreateReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_CreateReply.Unmarshal(m, b)
@@ -333,7 +333,7 @@ func (m *CreateReply) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_CreateReply proto.InternalMessageInfo
 
-func (m *CreateReply) GetId() int32 {
+func (m *CreateReply) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
@@ -341,7 +341,7 @@ func (m *CreateReply) GetId() int32 {
 }
 
 type ReadRequest struct {
-	Id                   int32    `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -351,7 +351,7 @@ func (m *ReadRequest) Reset()         { *m = ReadRequest{} }
 func (m *ReadRequest) String() string { return proto.CompactTextString(m) }
 func (*ReadRequest) ProtoMessage()    {}
 func (*ReadRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{6}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{6}
 }
 func (m *ReadRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ReadRequest.Unmarshal(m, b)
@@ -371,7 +371,7 @@ func (m *ReadRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ReadRequest proto.InternalMessageInfo
 
-func (m *ReadRequest) GetId() int32 {
+func (m *ReadRequest) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
@@ -389,7 +389,7 @@ func (m *ReadReply) Reset()         { *m = ReadReply{} }
 func (m *ReadReply) String() string { return proto.CompactTextString(m) }
 func (*ReadReply) ProtoMessage()    {}
 func (*ReadReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{7}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{7}
 }
 func (m *ReadReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_ReadReply.Unmarshal(m, b)
@@ -427,7 +427,7 @@ func (m *UpdateRequest) Reset()         { *m = UpdateRequest{} }
 func (m *UpdateRequest) String() string { return proto.CompactTextString(m) }
 func (*UpdateRequest) ProtoMessage()    {}
 func (*UpdateRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{8}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{8}
 }
 func (m *UpdateRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UpdateRequest.Unmarshal(m, b)
@@ -465,7 +465,7 @@ func (m *UpdateReply) Reset()         { *m = UpdateReply{} }
 func (m *UpdateReply) String() string { return proto.CompactTextString(m) }
 func (*UpdateReply) ProtoMessage()    {}
 func (*UpdateReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{9}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{9}
 }
 func (m *UpdateReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_UpdateReply.Unmarshal(m, b)
@@ -493,7 +493,7 @@ func (m *UpdateReply) GetSuccess() bool {
 }
 
 type DeleteRequest struct {
-	Id                   int32    `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Id                   int64    `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -503,7 +503,7 @@ func (m *DeleteRequest) Reset()         { *m = DeleteRequest{} }
 func (m *DeleteRequest) String() string { return proto.CompactTextString(m) }
 func (*DeleteRequest) ProtoMessage()    {}
 func (*DeleteRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{10}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{10}
 }
 func (m *DeleteRequest) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteRequest.Unmarshal(m, b)
@@ -523,7 +523,7 @@ func (m *DeleteRequest) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_DeleteRequest proto.InternalMessageInfo
 
-func (m *DeleteRequest) GetId() int32 {
+func (m *DeleteRequest) GetId() int64 {
 	if m != nil {
 		return m.Id
 	}
@@ -541,7 +541,7 @@ func (m *DeleteReply) Reset()         { *m = DeleteReply{} }
 func (m *DeleteReply) String() string { return proto.CompactTextString(m) }
 func (*DeleteReply) ProtoMessage()    {}
 func (*DeleteReply) Descriptor() ([]byte, []int) {
-	return fileDescriptor_addressbook_a2668267ded8174b, []int{11}
+	return fileDescriptor_addressbook_103abd5fcf83003c, []int{11}
 }
 func (m *DeleteReply) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_DeleteReply.Unmarshal(m, b)
@@ -593,8 +593,9 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// Client API for AddressBookService service
-
+// AddressBookServiceClient is the client API for AddressBookService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type AddressBookServiceClient interface {
 	List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListReply, error)
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateReply, error)
@@ -613,7 +614,7 @@ func NewAddressBookServiceClient(cc *grpc.ClientConn) AddressBookServiceClient {
 
 func (c *addressBookServiceClient) List(ctx context.Context, in *Empty, opts ...grpc.CallOption) (*ListReply, error) {
 	out := new(ListReply)
-	err := grpc.Invoke(ctx, "/pb.AddressBookService/List", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/pb.AddressBookService/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -622,7 +623,7 @@ func (c *addressBookServiceClient) List(ctx context.Context, in *Empty, opts ...
 
 func (c *addressBookServiceClient) Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateReply, error) {
 	out := new(CreateReply)
-	err := grpc.Invoke(ctx, "/pb.AddressBookService/Create", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/pb.AddressBookService/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -631,7 +632,7 @@ func (c *addressBookServiceClient) Create(ctx context.Context, in *CreateRequest
 
 func (c *addressBookServiceClient) Read(ctx context.Context, in *ReadRequest, opts ...grpc.CallOption) (*ReadReply, error) {
 	out := new(ReadReply)
-	err := grpc.Invoke(ctx, "/pb.AddressBookService/Read", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/pb.AddressBookService/Read", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -640,7 +641,7 @@ func (c *addressBookServiceClient) Read(ctx context.Context, in *ReadRequest, op
 
 func (c *addressBookServiceClient) Update(ctx context.Context, in *UpdateRequest, opts ...grpc.CallOption) (*UpdateReply, error) {
 	out := new(UpdateReply)
-	err := grpc.Invoke(ctx, "/pb.AddressBookService/Update", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/pb.AddressBookService/Update", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -649,7 +650,7 @@ func (c *addressBookServiceClient) Update(ctx context.Context, in *UpdateRequest
 
 func (c *addressBookServiceClient) Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteReply, error) {
 	out := new(DeleteReply)
-	err := grpc.Invoke(ctx, "/pb.AddressBookService/Delete", in, out, c.cc, opts...)
+	err := c.cc.Invoke(ctx, "/pb.AddressBookService/Delete", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -789,26 +790,26 @@ var _AddressBookService_serviceDesc = grpc.ServiceDesc{
 	Metadata: "addressbook.proto",
 }
 
-func init() { proto.RegisterFile("addressbook.proto", fileDescriptor_addressbook_a2668267ded8174b) }
+func init() { proto.RegisterFile("addressbook.proto", fileDescriptor_addressbook_103abd5fcf83003c) }
 
-var fileDescriptor_addressbook_a2668267ded8174b = []byte{
+var fileDescriptor_addressbook_103abd5fcf83003c = []byte{
 	// 449 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x53, 0x61, 0x8b, 0xd3, 0x40,
-	0x10, 0x6d, 0x72, 0x69, 0xee, 0x32, 0xa1, 0x67, 0x6f, 0x39, 0x8e, 0x50, 0x10, 0xcb, 0x7e, 0xb9,
+	0x10, 0x6d, 0xd2, 0x5c, 0xee, 0x32, 0xa1, 0x67, 0x6f, 0x39, 0x8e, 0x50, 0x10, 0xcb, 0x7e, 0xb9,
 	0x80, 0x90, 0xc3, 0xf6, 0x17, 0x78, 0x5a, 0x50, 0xbc, 0xb3, 0xc7, 0xaa, 0xf8, 0x39, 0x69, 0x06,
 	0x0c, 0xd7, 0x76, 0xd7, 0x6c, 0x2a, 0xe4, 0x5f, 0x8b, 0xbf, 0x40, 0x76, 0x27, 0x49, 0xd3, 0x0a,
 	0xea, 0x7d, 0xea, 0xec, 0xbe, 0x37, 0x6f, 0x66, 0xdf, 0x6b, 0xe0, 0x22, 0xcd, 0xf3, 0x12, 0xb5,
 	0xce, 0xa4, 0x7c, 0x4c, 0x54, 0x29, 0x2b, 0xc9, 0x5c, 0x95, 0xf1, 0x9f, 0x0e, 0xf8, 0x0f, 0x58,
 	0x6a, 0xb9, 0x65, 0x0c, 0xbc, 0x6d, 0xba, 0xc1, 0xc8, 0x99, 0x3a, 0x71, 0x20, 0x6c, 0xcd, 0xce,
-	0xc1, 0x2d, 0xf2, 0xc8, 0x9d, 0x3a, 0xf1, 0x50, 0xb8, 0x45, 0xce, 0x2e, 0x61, 0x88, 0x9b, 0xb4,
-	0x58, 0x47, 0x27, 0x96, 0x44, 0x07, 0x96, 0x80, 0xaf, 0xbe, 0xc9, 0x2d, 0xea, 0xc8, 0x9b, 0x9e,
-	0xc4, 0xe1, 0xec, 0x2a, 0x51, 0x59, 0x42, 0xaa, 0xc9, 0x83, 0x01, 0x3e, 0xee, 0x36, 0x19, 0x96,
-	0xa2, 0x61, 0x4d, 0x96, 0x10, 0xf6, 0xae, 0xd9, 0x15, 0xf8, 0x5b, 0x5b, 0x35, 0xa3, 0x9b, 0x13,
-	0x8b, 0xc1, 0xab, 0x6a, 0x85, 0x76, 0xfc, 0xf9, 0xec, 0xf2, 0x58, 0xf4, 0x73, 0xad, 0x50, 0x58,
-	0x06, 0x7f, 0x09, 0x41, 0x77, 0xc5, 0x00, 0xfc, 0xfb, 0xe5, 0xed, 0xfb, 0xbb, 0xc5, 0x78, 0xc0,
-	0xce, 0xc0, 0x7b, 0xb7, 0xbc, 0x5f, 0x8c, 0x1d, 0x53, 0x7d, 0x5d, 0x8a, 0x0f, 0x63, 0x97, 0xbf,
-	0x82, 0xf0, 0x35, 0x79, 0x71, 0x2b, 0xe5, 0x23, 0xe3, 0xe0, 0x2b, 0x94, 0x6a, 0x6d, 0x1e, 0x6e,
-	0x96, 0x87, 0xfd, 0x1c, 0xd1, 0x20, 0xfc, 0x14, 0x86, 0x8b, 0x8d, 0xaa, 0x6a, 0x7e, 0x03, 0xc1,
+	0xc1, 0x2d, 0xf2, 0xc8, 0x9d, 0x3a, 0xf1, 0x50, 0xb8, 0x45, 0xce, 0x2e, 0xe1, 0x04, 0x37, 0x69,
+	0xb1, 0x8e, 0x86, 0x96, 0x44, 0x07, 0x96, 0x80, 0xaf, 0xbe, 0xc9, 0x2d, 0xea, 0xc8, 0x9b, 0x0e,
+	0xe3, 0x70, 0x76, 0x95, 0xa8, 0x2c, 0x21, 0xd5, 0xe4, 0xc1, 0x00, 0x1f, 0x77, 0x9b, 0x0c, 0x4b,
+	0xd1, 0xb0, 0x26, 0x4b, 0x08, 0x7b, 0xd7, 0xec, 0x0a, 0xfc, 0xad, 0xad, 0x9a, 0xd1, 0xcd, 0x89,
+	0xc5, 0xe0, 0x55, 0xb5, 0x42, 0x3b, 0xfe, 0x7c, 0x76, 0x79, 0x2c, 0xfa, 0xb9, 0x56, 0x28, 0x2c,
+	0x83, 0xbf, 0x84, 0xa0, 0xbb, 0x62, 0x00, 0xfe, 0xfd, 0xf2, 0xf6, 0xfd, 0xdd, 0x62, 0x3c, 0x60,
+	0x67, 0xe0, 0xbd, 0x5b, 0xde, 0x2f, 0xc6, 0x8e, 0xa9, 0xbe, 0x2e, 0xc5, 0x87, 0xb1, 0xcb, 0x5f,
+	0x41, 0xf8, 0x9a, 0xbc, 0xb8, 0x95, 0xf2, 0x91, 0x71, 0xf0, 0x15, 0x4a, 0xb5, 0x36, 0x0f, 0x37,
+	0xcb, 0xc3, 0x7e, 0x8e, 0x68, 0x10, 0x7e, 0x0a, 0x27, 0x8b, 0x8d, 0xaa, 0x6a, 0x7e, 0x03, 0xc1,
 	0x5d, 0xa1, 0x2b, 0x81, 0x6a, 0x5d, 0xff, 0x57, 0xe7, 0x1c, 0x46, 0x6f, 0x4a, 0x4c, 0x2b, 0x14,
 	0xf8, 0x7d, 0x87, 0xba, 0xa2, 0x26, 0x43, 0xb1, 0x8f, 0xfd, 0xa3, 0xc9, 0xfc, 0xf2, 0xe7, 0x10,
 	0xb6, 0x4d, 0x66, 0x0e, 0x85, 0xe0, 0xb4, 0x21, 0x18, 0x58, 0x60, 0x9a, 0xb7, 0x8a, 0xc7, 0xf0,
@@ -820,6 +821,6 @@ var fileDescriptor_addressbook_a2668267ded8174b = []byte{
 	0x39, 0xca, 0x2e, 0x0c, 0x74, 0x10, 0xc9, 0xe4, 0x59, 0xff, 0x8a, 0xf8, 0x31, 0x78, 0xc6, 0x43,
 	0x66, 0xa1, 0x9e, 0xd9, 0xa4, 0xdc, 0xd9, 0x4b, 0xca, 0xe4, 0x03, 0x29, 0x1f, 0x18, 0x49, 0xca,
 	0x3d, 0x9b, 0x88, 0x4f, 0xaf, 0x25, 0xfe, 0x81, 0x35, 0xc4, 0xef, 0x99, 0xc1, 0x07, 0x99, 0x6f,
-	0xbf, 0xd5, 0xf9, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0xf3, 0xf3, 0xbb, 0xd0, 0xc0, 0x03, 0x00,
+	0xbf, 0xd5, 0xf9, 0xef, 0x00, 0x00, 0x00, 0xff, 0xff, 0xab, 0xf2, 0xd9, 0x8a, 0xc0, 0x03, 0x00,
 	0x00,
 }

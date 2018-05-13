@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"log"
 	"net"
 	"os"
@@ -22,27 +21,14 @@ const (
 )
 
 type server struct {
-	db *sql.DB
+	db *appDB
 }
 
 func (s *server) List(ctx context.Context, in *pb.Empty) (*pb.ListReply, error) {
 	log.Println("ListRequest", in)
 
-	rows, err := s.db.Query("SELECT id, name, email FROM people")
+	people, err := s.db.list()
 	if err != nil {
-		log.Fatal(err)
-	}
-
-	people := make([]*pb.Person, 0)
-	for rows.Next() {
-		var id int32
-		var name, email string
-		if err := rows.Scan(&id, &name, &email); err != nil {
-			log.Fatal(err)
-		}
-		people = append(people, &pb.Person{Id: id, Name: name, Email: email})
-	}
-	if err := rows.Err(); err != nil {
 		log.Fatal(err)
 	}
 
@@ -52,46 +38,32 @@ func (s *server) List(ctx context.Context, in *pb.Empty) (*pb.ListReply, error) 
 func (s *server) Create(ctx context.Context, in *pb.CreateRequest) (*pb.CreateReply, error) {
 	log.Println("CreateRequest", in)
 
-	r, err := s.db.Exec("INSERT INTO people (name, email) VALUES (?, ?)", in.Person.Name, in.Person.Email)
+	id, err := s.db.create(in.Person)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	id, err := r.LastInsertId()
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return &pb.CreateReply{Id: int32(id)}, nil
+	return &pb.CreateReply{Id: id}, nil
 }
 
 func (s *server) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadReply, error) {
 	log.Println("ReadRequest", in)
 
-	rows := s.db.QueryRow("SELECT id, name, email FROM people WHERE id = ?", in.Id)
-	var id int32
-	var name, email string
-	if err := rows.Scan(&id, &name, &email); err != nil {
-		log.Printf("Query failed: %v", err)
+	person, err := s.db.read(in.Id)
+	if err != nil {
+		log.Println(err)
 		return &pb.ReadReply{Person: nil}, nil
 	}
 
-	person := &pb.Person{Id: id, Name: name, Email: email}
 	return &pb.ReadReply{Person: person}, nil
 }
 
 func (s *server) Update(ctx context.Context, in *pb.UpdateRequest) (*pb.UpdateReply, error) {
 	log.Println("UpdateRequest", in)
 
-	r, err := s.db.Exec("UPDATE people SET name = ?, email = ? WHERE id = ?",
-		in.Person.Name, in.Person.Email, in.Person.Id)
+	err := s.db.update(in.Person)
 	if err != nil {
-		log.Printf("Query failed: %v", err)
-		return &pb.UpdateReply{Success: false}, nil
-	}
-
-	numAffected, err := r.RowsAffected()
-	if err != nil || numAffected != 1 {
+		log.Println(err)
 		return &pb.UpdateReply{Success: false}, nil
 	}
 
@@ -101,47 +73,25 @@ func (s *server) Update(ctx context.Context, in *pb.UpdateRequest) (*pb.UpdateRe
 func (s *server) Delete(ctx context.Context, in *pb.DeleteRequest) (*pb.DeleteReply, error) {
 	log.Println("DeleteRequest", in)
 
-	r, err := s.db.Exec("DELETE FROM people WHERE id = ?", in.Id)
+	err := s.db.delete(in.Id)
 	if err != nil {
-		log.Printf("Query failed: %v", err)
-		return &pb.DeleteReply{Success: false}, nil
-	}
-
-	numAffected, err := r.RowsAffected()
-	if err != nil || numAffected != 1 {
+		log.Println(err)
 		return &pb.DeleteReply{Success: false}, nil
 	}
 
 	return &pb.DeleteReply{Success: true}, nil
 }
 
-func (s *server) init() {
-	log.Println("Init server")
-
-	db, err := sql.Open("mysql", dbConnStr)
+func main() {
+	db := &appDB{}
+	numPeople, err := db.open(dbConnStr)
 	if err != nil {
 		log.Fatalf("Failed to open database: %v", err)
 	}
-	s.db = db
-
-	var numPeople int
-	err = db.QueryRow("SELECT COUNT(id) FROM people").Scan(&numPeople)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	log.Printf("There are %d people in database", numPeople)
-}
+	defer db.close()
 
-func (s *server) cleanup() {
-	log.Println("Cleanup server")
-
-	s.db.Close()
-}
-
-func main() {
-	svr := &server{}
-	svr.init()
+	svr := &server{db: db}
 
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
@@ -166,6 +116,4 @@ func main() {
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve: %v", err)
 	}
-
-	svr.cleanup()
 }

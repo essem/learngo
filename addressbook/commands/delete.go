@@ -13,15 +13,15 @@ import (
 // Delete a person from address book
 func Delete(c pb.AddressBookServiceClient, reader *bufio.Reader) {
 	fmt.Print("ID: ")
-	IDStr, _ := reader.ReadString('\n')
+	idStr, _ := reader.ReadString('\n')
 
-	ID, err := strconv.Atoi(strings.TrimSpace(IDStr))
+	id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64)
 	if err != nil {
 		fmt.Printf("Could not convert id: %v\n", err)
 		return
 	}
 
-	r, err := c.Delete(context.Background(), &pb.DeleteRequest{Id: int32(ID)})
+	r, err := c.Delete(context.Background(), &pb.DeleteRequest{Id: id})
 	if err != nil {
 		fmt.Printf("Could not delete: %v\n", err)
 		return

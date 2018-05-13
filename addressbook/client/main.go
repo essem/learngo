@@ -22,9 +22,10 @@ func main() {
 	defer conn.Close()
 	c := pb.NewAddressBookServiceClient(conn)
 
+	reader := bufio.NewReader(os.Stdin)
+
 CommandLoop:
 	for {
-		reader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter command(l/c/r/u/d/q): ")
 		command, _ := reader.ReadString('\n')
 		switch strings.TrimSpace(command) {

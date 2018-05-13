@@ -13,15 +13,15 @@ import (
 // Read a person information in address book
 func Read(c pb.AddressBookServiceClient, reader *bufio.Reader) {
 	fmt.Print("ID: ")
-	IDStr, _ := reader.ReadString('\n')
+	idStr, _ := reader.ReadString('\n')
 
-	ID, err := strconv.Atoi(strings.TrimSpace(IDStr))
+	id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64)
 	if err != nil {
 		fmt.Printf("Could not convert id: %v\n", err)
 		return
 	}
 
-	r, err := c.Read(context.Background(), &pb.ReadRequest{Id: int32(ID)})
+	r, err := c.Read(context.Background(), &pb.ReadRequest{Id: id})
 	if err != nil {
 		fmt.Printf("Could not read: %v\n", err)
 		return
