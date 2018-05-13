@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/essem/learngo/addressbook/pb"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type appDB struct {
