@@ -33,6 +33,15 @@ func (db *appDB) close() {
 	db.sqlDB.Close()
 }
 
+func (db *appDB) reset() error {
+	_, err := db.sqlDB.Exec("TRUNCATE TABLE people")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (db *appDB) list() ([]*pb.Person, error) {
 	rows, err := db.sqlDB.Query("SELECT id, name, email FROM people")
 	if err != nil {
