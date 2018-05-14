@@ -22,11 +22,17 @@ cd ~/work/go/src/github.com/essem
 git clone git@github.com:essem/learngo.git
 ```
 
+## Install dep
+
+```
+curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+```
+
 ## Install dependencies
 
 ```
-cd learngo
-go get ./...
+cd learngo/addressbook
+dep ensure
 ```
 
 ## Install protocol buffer compiler
