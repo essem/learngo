@@ -6,16 +6,34 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"github.com/spf13/viper"
 )
 
-const (
-	dbConnStr       = "dev:password@tcp(127.0.0.1:3306)/addressbook"
-	grpcBindAddress = ":50051"
-	webBindAddress  = ":8090"
-)
+func initConfig() {
+	viper.AddConfigPath("./config")
+	viper.SetConfigName("default")
+
+	err := viper.ReadInConfig()
+	if err != nil {
+		log.Fatalln("Failed to read default config", err)
+	}
+
+	viper.SetConfigName("local")
+	err = viper.MergeInConfig()
+	if err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
+			log.Fatalln("Failed to read local config", err)
+		}
+	}
+}
 
 func main() {
+	initConfig()
+
 	db := &appDB{}
+	dbConnStr := viper.GetString("database.connStr")
+	log.Println("Connect database...")
 	numPeople, err := db.open(dbConnStr)
 	if err != nil {
 		log.Fatalf("Failed to open database: %v", err)
@@ -24,10 +42,12 @@ func main() {
 	defer db.close()
 
 	log.Println("Init grpc service...")
+	grpcBindAddress := viper.GetString("grpc.bindAddress")
 	grpcService := &grpcService{db: db}
 	grpcService.init()
 
 	log.Println("Init web service...")
+	webBindAddress := viper.GetString("web.bindAddress")
 	webService := &webService{db: db}
 	webService.init(webBindAddress)
 

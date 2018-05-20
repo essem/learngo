@@ -1,0 +1,6 @@
+database:
+  connStr: dev:password@tcp(127.0.0.1:3306)/addressbook
+grpc:
+  bindAddress: :50051
+web:
+  bindAddress: :8090
