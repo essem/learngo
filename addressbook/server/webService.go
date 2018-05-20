@@ -2,9 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/essem/learngo/addressbook/pb"
 	_ "github.com/go-sql-driver/mysql"
@@ -58,7 +59,12 @@ func (s *webService) init(address string) {
 
 	hander := func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log.Println(r.Method, r.URL.Path, r.RemoteAddr, r.UserAgent())
+			log.WithFields(log.Fields{
+				"method": r.Method,
+				"path":   r.URL.Path,
+				"remote": r.RemoteAddr,
+				"agent":  r.UserAgent(),
+			}).Info("HTTP request")
 			next.ServeHTTP(w, r)
 		})
 	}
@@ -90,7 +96,7 @@ func writeJSON(w http.ResponseWriter, p interface{}) {
 func (s *webService) list(w http.ResponseWriter, r *http.Request) {
 	people, err := s.db.list()
 	if err != nil {
-		log.Fatal(err)
+		log.WithFields(log.Fields{"err": err, "service": "web"}).Fatal("Failed to list")
 	}
 
 	writeJSON(w, people)
@@ -107,7 +113,7 @@ func (s *webService) create(w http.ResponseWriter, r *http.Request) {
 
 	id, err := s.db.create(&person)
 	if err != nil {
-		log.Fatal(err)
+		log.WithFields(log.Fields{"err": err, "service": "web"}).Fatal("Failed to create")
 	}
 
 	writeJSON(w, id)
@@ -119,6 +125,7 @@ func (s *webService) read(w http.ResponseWriter, r *http.Request) {
 
 	person, err := s.db.read(id)
 	if err != nil {
+		log.WithError(err).Debug("Failed to read")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -140,6 +147,7 @@ func (s *webService) update(w http.ResponseWriter, r *http.Request) {
 
 	err = s.db.update(&person)
 	if err != nil {
+		log.WithError(err).Debug("Failed to update")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
@@ -153,6 +161,7 @@ func (s *webService) delete(w http.ResponseWriter, r *http.Request) {
 
 	err := s.db.delete(id)
 	if err != nil {
+		log.WithError(err).Debug("Failed to delete")
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}

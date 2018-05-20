@@ -1,52 +1,36 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/spf13/viper"
 )
 
-func initConfig() {
-	viper.AddConfigPath("./config")
-	viper.SetConfigName("default")
-
-	err := viper.ReadInConfig()
-	if err != nil {
-		log.Fatalln("Failed to read default config", err)
-	}
-
-	viper.SetConfigName("local")
-	err = viper.MergeInConfig()
-	if err != nil {
-		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
-			log.Fatalln("Failed to read local config", err)
-		}
-	}
-}
-
 func main() {
 	initConfig()
+	initLog()
 
 	db := &appDB{}
 	dbConnStr := viper.GetString("database.connStr")
-	log.Println("Connect database...")
+	log.WithField("dbConnStr", dbConnStr).Info("Connect database...")
 	numPeople, err := db.open(dbConnStr)
 	if err != nil {
-		log.Fatalf("Failed to open database: %v", err)
+		log.WithError(err).Fatal("Failed to open database")
 	}
-	log.Printf("There are %d people in database", numPeople)
+	log.WithField("num", numPeople).Info("Loaded people from database")
 	defer db.close()
 
-	log.Println("Init grpc service...")
+	log.Info("Init grpc service...")
 	grpcBindAddress := viper.GetString("grpc.bindAddress")
 	grpcService := &grpcService{db: db}
 	grpcService.init()
 
-	log.Println("Init web service...")
+	log.Info("Init web service...")
 	webBindAddress := viper.GetString("web.bindAddress")
 	webService := &webService{db: db}
 	webService.init(webBindAddress)
@@ -56,12 +40,12 @@ func main() {
 	signal.Notify(gracefulStop, syscall.SIGINT)
 	go func() {
 		sig := <-gracefulStop
-		log.Printf("Caught signal: %+v", sig)
+		log.WithField("signal", sig).Info("Caught signal")
 
-		log.Println("Stop grpc service...")
+		log.Info("Stop grpc service...")
 		grpcService.shutdown()
 
-		log.Println("Stop web service...")
+		log.Info("Stop web service...")
 		webService.shutdown()
 	}()
 
@@ -69,18 +53,18 @@ func main() {
 
 	wg.Add(1)
 	go func() {
-		log.Printf("Start grpc service on %s", grpcBindAddress)
+		log.WithField("address", grpcBindAddress).Info("Start grpc service")
 		if err := grpcService.serve(grpcBindAddress); err != nil {
-			log.Fatalln(err)
+			log.WithError(err).Fatal("Failed to grpc service")
 		}
 		wg.Done()
 	}()
 
 	wg.Add(1)
 	go func() {
-		log.Printf("Start web service on %s", webBindAddress)
+		log.WithField("address", webBindAddress).Info("Start web service")
 		if err := webService.serve(); err != nil {
-			log.Fatalln(err)
+			log.WithError(err).Fatal("Failed to web service")
 		}
 		wg.Done()
 	}()

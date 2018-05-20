@@ -1,5 +1,4 @@
 vendor/
 debug
-server/server
 client/client
 **/config/local.yml

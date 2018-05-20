@@ -1,8 +1,9 @@
 package main
 
 import (
-	"log"
 	"net"
+
+	log "github.com/sirupsen/logrus"
 
 	_ "github.com/go-sql-driver/mysql"
 
@@ -43,33 +44,33 @@ func (s *grpcService) shutdown() {
 }
 
 func (s *grpcService) List(ctx context.Context, in *pb.Empty) (*pb.ListReply, error) {
-	log.Println("ListRequest", in)
+	log.WithField("pb", in).Info("ListRequest")
 
 	people, err := s.db.list()
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Fatal("Failed to list")
 	}
 
 	return &pb.ListReply{People: people}, nil
 }
 
 func (s *grpcService) Create(ctx context.Context, in *pb.CreateRequest) (*pb.CreateReply, error) {
-	log.Println("CreateRequest", in)
+	log.WithField("pb", in).Info("CreateRequest")
 
 	id, err := s.db.create(in.Person)
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Fatal("Failed to create")
 	}
 
 	return &pb.CreateReply{Id: id}, nil
 }
 
 func (s *grpcService) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadReply, error) {
-	log.Println("ReadRequest", in)
+	log.WithField("pb", in).Info("ReadRequest")
 
 	person, err := s.db.read(in.Id)
 	if err != nil {
-		log.Println(err)
+		log.WithError(err).Debug("Failed to read")
 		return &pb.ReadReply{Person: nil}, nil
 	}
 
@@ -77,11 +78,11 @@ func (s *grpcService) Read(ctx context.Context, in *pb.ReadRequest) (*pb.ReadRep
 }
 
 func (s *grpcService) Update(ctx context.Context, in *pb.UpdateRequest) (*pb.UpdateReply, error) {
-	log.Println("UpdateRequest", in)
+	log.WithField("pb", in).Info("UpdateRequest")
 
 	err := s.db.update(in.Person)
 	if err != nil {
-		log.Println(err)
+		log.WithError(err).Debug("Failed to update")
 		return &pb.UpdateReply{Success: false}, nil
 	}
 
@@ -89,11 +90,11 @@ func (s *grpcService) Update(ctx context.Context, in *pb.UpdateRequest) (*pb.Upd
 }
 
 func (s *grpcService) Delete(ctx context.Context, in *pb.DeleteRequest) (*pb.DeleteReply, error) {
-	log.Println("DeleteRequest", in)
+	log.WithField("pb", in).Info("DeleteRequest")
 
 	err := s.db.delete(in.Id)
 	if err != nil {
-		log.Println(err)
+		log.WithError(err).Debug("Failed to delete")
 		return &pb.DeleteReply{Success: false}, nil
 	}
 
